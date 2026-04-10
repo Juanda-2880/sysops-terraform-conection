@@ -33,6 +33,12 @@ aws_access_key_id     = ASIA...
 aws_secret_access_key = xxxx...
 aws_session_token     = IQoJ...
 ```
+6. Inicia una nueva terminal y coloca el siguiente comando
+
+```
+aws configure --profile sandbox
+```
+
 
 >  **Importante:** Las credenciales del sandbox expiran cada ~120 minutos. Debes repetir este paso en cada sesión.
 
@@ -47,12 +53,12 @@ terraform-sandbox/
 ├── providers.tf
 ├── variables.tf
 ├── main.tf
-└── outputs.tf
+└── .gitginore
 ```
 
 ---
 
-##  4. Archivos de configuración
+##  3. Archivos de configuración
 
 ### `providers.tf`
 
@@ -61,13 +67,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 }
 
 provider "aws" {
   region = var.aws_region
+  profile = var.account
 }
 ```
 
@@ -75,9 +82,11 @@ provider "aws" {
 
 ```hcl
 variable "aws_region" {
-  description = "Región de AWS"
-  type        = string
-  default     = "us-east-1"
+  default = "us-east-1"
+}
+
+variable "account" {
+    default = "sandbox"
 }
 ```
 
@@ -92,19 +101,9 @@ resource "aws_vpc" "main" {
   }
 }
 ```
-
-### `outputs.tf`
-
-```hcl
-output "vpc_id" {
-  description = "ID de la VPC creada"
-  value       = aws_vpc.main.id
-}
-```
-
 ---
 
-##  5. Inicializar y desplegar
+##  4. Inicializar y desplegar
 
 Ejecuta los siguientes comandos en orden dentro de la carpeta `terraform-sandbox/`:
 
